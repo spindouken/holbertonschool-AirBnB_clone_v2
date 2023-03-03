@@ -117,35 +117,30 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class with given parameters """
+        split_args = args.split()
         if not args:
             print("** class name missing **")
             return
-
-        args_list = args.split()
-        class_name = args_list[0]
-        if class_name not in HBNBCommand.classes:
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        new_instance = HBNBCommand.classes[split_args[0]]()
+        for i in range(1, len(split_args)):
+            key_val = split_args[i].partition('=')
+            new_key = key_val[0] 
+            new_val = key_val[2]
+            if '\"' in new_val:
+                new_val = new_val[1:-1]
+                new_val = new_val.replace("_", " ")
+            elif '.' in new_val:
+                new_val = float(new_val)
+            else:
+                new_val = int(new_val)
 
-        # Create a dictionary to hold the attribute-value pairs
-        attr_dict = {}
+            if hasattr(new_instance, new_key):
+                setattr(new_instance, new_key, new_val)
 
-        # Loop through the remaining args and add them to the dictionary
-        for arg in args_list[1:]:
-            try:
-                key, value = arg.split('=')
-                value = value.replace('_', ' ')
-                if value[0] == '"' and value[-1] == '"' and value.count('"') == 2:
-                    value = value.replace('\\"', '"')[1:-1]
-                elif '.' in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-                attr_dict[key] = value
-            except (ValueError, AttributeError):
-                continue
-
-        new_instance = HBNBCommand.classes[class_name](**attr_dict)
+        storage.new(new_instance)
         storage.save()
         print(new_instance.id)
 
