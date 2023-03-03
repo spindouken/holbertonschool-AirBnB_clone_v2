@@ -2,6 +2,8 @@
 """ Console Module """
 import cmd
 import sys
+from models import *
+from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -21,7 +23,7 @@ class HBNBCommand(cmd.Cmd):
     classes = {
                'BaseModel': BaseModel, 'User': User, 'Place': Place,
                'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
+               'Review': Review, 'FileStorage': FileStorage,
               }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
@@ -114,17 +116,51 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        """Create an object of any class"""
+    if not args:
+        print("** class name missing **")
+        return
+
+    arg_list = args.split()
+    class_name = arg_list[0]
+    
+    if class_name not in HBNBCommand.classes:
+        print("** class doesn't exist **")
+        return
+    # Get the parameter list
+    param_list = []
+    for arg in arg_list[1:]:
+        if "=" not in arg:
+            continue
+
+        key, value = arg.split("=")
+        value = value.replace("_", " ")
+
+        # Check for string value
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1].replace('\\"', '"')
+
+        # Check for float value
+        elif "." in value and all(c.isdigit() or c == "." for c in value):
+            value = float(value)
+
+        # Check for integer value
+        elif all(c.isdigit() for c in value):
+            value = int(value)
+
+        # Ignore any other value types
+        else:
+            continue
+
+        param_list.append((key, value))
+
+    # Create the object with given parameters
+    new_instance = HBNBCommand.classes[class_name]()
+    for key, value in param_list:
+        setattr(new_instance, key, value)
+
+    new_instance.save()
+    print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
