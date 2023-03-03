@@ -116,51 +116,38 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Create an object of any class"""
-    if not args:
-        print("** class name missing **")
-        return
+        """ Create an object of any class with given parameters """
+        if not args:
+            print("** class name missing **")
+            return
 
-    arg_list = args.split()
-    class_name = arg_list[0]
-    
-    if class_name not in HBNBCommand.classes:
-        print("** class doesn't exist **")
-        return
-    # Get the parameter list
-    param_list = []
-    for arg in arg_list[1:]:
-        if "=" not in arg:
-            continue
+        args_list = args.split()
+        class_name = args_list[0]
+        if class_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
 
-        key, value = arg.split("=")
-        value = value.replace("_", " ")
+        # Create a dictionary to hold the attribute-value pairs
+        attr_dict = {}
 
-        # Check for string value
-        if value.startswith('"') and value.endswith('"'):
-            value = value[1:-1].replace('\\"', '"')
+        # Loop through the remaining args and add them to the dictionary
+        for arg in args_list[1:]:
+            try:
+                key, value = arg.split('=')
+                value = value.replace('_', ' ')
+                if value[0] == '"' and value[-1] == '"' and value.count('"') == 2:
+                    value = value.replace('\\"', '"')[1:-1]
+                elif '.' in value:
+                    value = float(value)
+                else:
+                    value = int(value)
+                attr_dict[key] = value
+            except (ValueError, AttributeError):
+                continue
 
-        # Check for float value
-        elif "." in value and all(c.isdigit() or c == "." for c in value):
-            value = float(value)
-
-        # Check for integer value
-        elif all(c.isdigit() for c in value):
-            value = int(value)
-
-        # Ignore any other value types
-        else:
-            continue
-
-        param_list.append((key, value))
-
-    # Create the object with given parameters
-    new_instance = HBNBCommand.classes[class_name]()
-    for key, value in param_list:
-        setattr(new_instance, key, value)
-
-    new_instance.save()
-    print(new_instance.id)
+        new_instance = HBNBCommand.classes[class_name](**attr_dict)
+        storage.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
