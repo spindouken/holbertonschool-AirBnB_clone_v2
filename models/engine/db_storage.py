@@ -13,7 +13,7 @@ from models.user import User
 
 
 class DBStorage:
-    """This class manages storage of hbnb models in a MySQL database"""
+    """Manages storage of HBNB models in a MySQL database"""
     __engine = None
     __session = None
 
@@ -51,7 +51,7 @@ class DBStorage:
 
     def delete(self, obj=None):
         """Delete obj from the current database session"""
-        if obj:
+        if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
@@ -60,3 +60,7 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         self.__session = scoped_session(sessionmaker(bind=self.__engine,
                                                      expire_on_commit=False))
+
+    def close(self):
+        """Method that closes the session"""
+        self.__session.close()
