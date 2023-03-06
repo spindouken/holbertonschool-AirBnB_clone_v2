@@ -1,26 +1,30 @@
 #!/usr/bin/python3
-from sqlalchemy import Column, String, ForeignKey
+"""This is the city class"""
 from models.base_model import BaseModel, Base
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, ForeignKey
 from os import getenv
+from sqlalchemy.orm import relationship
 
 
 class City(BaseModel, Base):
-    __tablename__ = 'cities'
-
-    name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-
+    """This is the class for City
+    Attributes:
+        state_id: The state id
+        name: input name
+    """
+    __tablename__ = "cities"
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        places = relationship("Place", backref="cities", cascade="all, delete")
+        name = Column(
+            String(128),
+            nullable=False)
+        state_id = Column(
+            String(60),
+            ForeignKey('states.id'),
+            nullable=False)
+        places = relationship(
+            "Place",
+            backref="cities",
+            cascade="all, delete-orphan")
     else:
-        @property
-        def places(self):
-            """ Getter attribute in case of file storage """
-            from models import storage
-            from models.place import Place
-            place_list = []
-            for place in storage.all(Place).values():
-                if place.city_id == self.id:
-                    place_list.append(place)
-            return place_list
+        name = ""
+        state_id = ""
