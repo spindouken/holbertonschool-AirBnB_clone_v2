@@ -52,7 +52,11 @@ class DBStorage:
     def delete(self, obj=None):
         """Delete obj from the current database session"""
         if obj is not None:
-            self.__session.delete(obj)
+            try:
+                self.__session.delete(obj)
+                self.__session.commit()
+            except UnmappedInstanceError:
+                pass
 
     def reload(self):
         """Create all tables in the database and create
