@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
+from models import Amenity
+from models import storage
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from os import getenv
@@ -39,7 +41,7 @@ class Place(BaseModel, Base):
     else:
         @property
         def reviews(self):
-            """ Getter attribute in case of file storage """
+            """ Review Getter attribute in case of file storage """
             from models import storage
             from models.review import Review
             review_list = []
@@ -47,3 +49,23 @@ class Place(BaseModel, Base):
                 if review.place_id == self.id:
                     review_list.append(review)
             return review_list
+
+        @property
+        def amenities(self):
+            """ Amenity Getter attribute in case of file storage """
+            from models import storage
+            from models.amenity import Amenity
+            a_list = []
+            a_dictionary = storage.all(Amenity)
+
+            for a_instance in a_dictionary.values():
+                if a_instance.id == self.amenity_id:
+                    a_list.append(a_instance)
+            return a_list
+
+        @amenities.setter
+        def amenities(self, amenity_list):
+            """ Amenity Setter attribute in case of file storage """
+            for amenity_variable in amenity_list:
+                if type(amenity_variable) == Amenity:
+                    self.amenity_ids.append(amenity_variable)
