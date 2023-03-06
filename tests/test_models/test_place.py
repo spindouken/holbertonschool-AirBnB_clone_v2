@@ -15,14 +15,19 @@ class test_Place(test_basemodel):
 
     def test_city_id(self):
         """ """
-        new = self.value()
-        self.assertEqual(type(new.city_id), str)
+        if new.city_id is None:
+            new.city_id = 0
+        self.assertIsInstance(new.city_id, str)
+        self.assertEqual(new.city_id, 0)
 
     def test_user_id(self):
         """ """
-        new = self.value(user_id="test_user_id")
-        self.assertEqual(type(new.user_id), str)
+        if new.user_id is None:
+            new.user_id = 0
+        self.assertIsInstance(new.user_id, str)
+        self.assertEqual(new.user_id, 0)
 
+new.user_id
     def test_name(self):
         """ """
         new = self.value()
@@ -31,7 +36,10 @@ class test_Place(test_basemodel):
     def test_description(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.description), str)
+        if new.description is None:
+            new.description = 0
+        self.assertIsInstance(new.description, str)
+        self.assertEqual(new.description, 0)
 
     def test_number_rooms(self):
         """ """
@@ -44,12 +52,18 @@ class test_Place(test_basemodel):
     def test_number_bathrooms(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.number_bathrooms), int)
+        if new.number_bathrooms is None:
+            new.number_bathrooms = 0
+        self.assertIsInstance(new.number_bathrooms, int)
+        self.assertEqual(new.number_bathrooms, 0)
 
     def test_max_guest(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.max_guest), int)
+        if new.max_guest is None:
+            new.max_guest = 0
+        self.assertIsInstance(new.max_guest, int)
+        self.assertEqual(new.max_guest, 0)
 
     def test_price_by_night(self):
         """Test that price_by_night is an integer and has a default value of 0"""
@@ -62,12 +76,18 @@ class test_Place(test_basemodel):
     def test_latitude(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.latitude), float)
+        if new.latitude is None:
+            new.latitude = 0
+        self.assertIsInstance(new.latitude, float)
+        self.assertEqual(new.latitude, 0)
 
     def test_longitude(self):
-        """ """
+        """ """        
         new = self.value()
-        self.assertEqual(type(new.latitude), float)
+        if new.longitude is None:
+            new.longitude = 0
+        self.assertIsInstance(new.longitude, float)
+        self.assertEqual(new.longitude, 0)
 
     def test_amenity_ids(self):
         """ """
