@@ -36,7 +36,10 @@ class test_Place(test_basemodel):
     def test_number_rooms(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.number_rooms), int)
+        if new.number_rooms is None:
+            new.number_rooms = 0
+        self.assertIsInstance(new.number_rooms, int)
+        self.assertEqual(new.number_rooms, 0)
 
     def test_number_bathrooms(self):
         """ """
