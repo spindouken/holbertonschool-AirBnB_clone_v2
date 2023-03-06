@@ -23,6 +23,12 @@ class BaseModel:
             self.updated_at = datetime.now()
             storage.new(self)
         else:
+            session = kwargs.pop('_sa_instance_state', None)
+            if session is None:
+                from models import storage
+                session = storage._DBStorage__session
+            # Attach the object to the session
+            session.add(self)
             for key, value in kwargs.items():
                 if key != '__class__':
                     setattr(self, key, value)
