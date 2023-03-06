@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """ Place Module for HBNB project """
 import models
 from models.base_model import BaseModel, Base
@@ -35,38 +36,36 @@ class Place(BaseModel, Base):
     reviews = relationship('Review',
                                cascade="all, delete, delete-orphan",
                                backref="place")
+    amenities = relationship("Amenity",
+                                 secondary=place_amenity,
+                                 back_populates='place_amenities',
+                                 viewonly=False)
 
-    @property
-    def reviews(self):
-        """ Review Getter attribute in case of file storage """
-        reviews_list = []
+    if getenv('HBNB_TYPE_STORAGE') != 'db':
+        @property
+        def reviews(self):
+            """ Review Getter attribute in case of file storage """
+            reviews_list = []
 
-        for review in list(models.storage.all(Review).values()):
-            if review.place_id == self.id:
-                reviews_list.append(review)
-        return reviews_list
+            for review in list(models.storage.all(Review).values()):
+                if review.place_id == self.id:
+                    reviews_list.append(review)
+            return reviews_list
 
-    @property
-    def amenities(self):
-        """getter"""
-        amenities_list = []
+        @property
+        def amenities(self):
+            """getter"""
+            amenities_list = []
 
-        for amenity in list(models.storage.all(Amenity).values()):
-            if amenity.id in self.amenity_ids:
-                amenities_list.append(amenity)
-        return amenities_list
+            for amenity in list(models.storage.all(Amenity).values()):
+                if amenity.id in self.amenity_ids:
+                    amenities_list.append(amenity)
+            return amenities_list
 
-    @amenities.setter
-    def amenities(self, amenity_list):
-        """setter"""
-        if type(obj) == Amenity:
-            self.amenities_ids.append(obj.id)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        from models.place import place_amenity
-        self.amenities = []
-        self.amenities_ids = []
-        self.amenities = relationship('Amenity',
-                                       secondary=place_amenity,
-                                       back_populates='place_amenities',
+        @amenities.setter
+        def amenities(self, amenity_list):
+            """setter"""
+            if all(isinstance(amenity, Amenity) for amenity in amenity_list):
+                self.amenity_ids = [amenity.id for amenity in amenity_list]
+            else:
+                return
