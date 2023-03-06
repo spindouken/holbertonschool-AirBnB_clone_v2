@@ -20,8 +20,9 @@ class test_Place(test_basemodel):
 
     def test_user_id(self):
         """ """
-        new = self.value()
+        new = self.value(user_id="test_user_id")
         self.assertEqual(type(new.user_id), str)
+
 
     def test_name(self):
         """ """
