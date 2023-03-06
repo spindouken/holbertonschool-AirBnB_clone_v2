@@ -49,21 +49,3 @@ class Place(BaseModel, Base):
                 if review.place_id == self.id:
                     review_list.append(review)
             return review_list
-
-        @property
-        def amenities(self):
-            """ Amenity Getter attribute in case of file storage """
-            a_list = []
-            a_dictionary = storage.all(Amenity)
-
-            for a_instance in a_dictionary.values():
-                if a_instance.id == self.amenity_id:
-                    a_list.append(a_instance)
-            return a_list
-
-        @amenities.setter
-        def amenities(self, amenity_list):
-            """ Amenity Setter attribute in case of file storage """
-            for amenity_variable in amenity_list:
-                if type(amenity_variable) == Amenity:
-                    self.amenity_ids.append(amenity_variable)
