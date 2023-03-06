@@ -154,3 +154,7 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertNotEqual(initial_session, self.storage._DBStorage__session)
         self.storage._DBStorage__session.close()
         self.storage._DBStorage__session = initial_session
+
+
+if __name__ == "__main__":
+    unittest.main()
