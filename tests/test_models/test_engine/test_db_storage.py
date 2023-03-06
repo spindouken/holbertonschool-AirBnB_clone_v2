@@ -7,7 +7,7 @@ import models
 import MySQLdb
 import unittest
 from os import getenv
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
 from models.city import City
@@ -38,7 +38,7 @@ class TestDatabaseDocs(unittest.TestCase):
             cls.user = User(email="betty@holberton.com", password="shnarf")
             cls.storage._DBStorage__session.add(cls.user)
             cls.place = Place(city_id=cls.city.id, user_id=cls.user.id,
-                            name="Holberton")
+                              name="Holberton")
             cls.storage._DBStorage__session.add(cls.place)
             cls.amenity = Amenity(name="Corn Holder")
             cls.storage._DBStorage__session.add(cls.amenity)
@@ -82,11 +82,12 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertIsNotNone(DBStorage.reload.__doc__)
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_attributes(self):
         """Test that engine and session attributes exist."""
         self.assertTrue(isinstance(self.storage._DBStorage__engine, Engine))
         self.assertTrue(isinstance(self.storage._DBStorage__session, Session))
+
     def test_dbstorage_methods(self):
         self.assertTrue(hasattr(DBStorage, "__init__"))
         self.assertTrue(hasattr(DBStorage, "all"))
@@ -96,13 +97,13 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertTrue(hasattr(DBStorage, "reload"))
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_init(self):
         """Test initialization."""
         self.assertTrue(isinstance(self.storage, DBStorage))
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_all(self):
         """Test default all method."""
         obj = self.storage.all()
@@ -110,7 +111,7 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertEqual(len(obj), 6)
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_new(self):
         st = State(name="Oklahoma")
         self.storage.new(st)
@@ -118,15 +119,15 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertIn(st, store)
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_save(self):
         """Test save method."""
         st = State(name="Oklahoma")
         self.storage._DBStorage__session.add(st)
         self.storage.save()
         db = MySQLdb.connect(user="hbnb_test",
-                            passwd="hbnb_test_pwd",
-                            db="hbnb_test_db")
+                             passwd="hbnb_test_pwd",
+                             db="hbnb_test_db")
         cursor = db.cursor()
         cursor.execute("SELECT * FROM states WHERE BINARY name = 'Oklahoma'")
         query = cursor.fetchall()
@@ -135,7 +136,7 @@ class TestDatabaseDocs(unittest.TestCase):
         cursor.close()
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_delete(self):
         """Test delete method."""
         state = State(name="Oklahoma")
@@ -145,7 +146,7 @@ class TestDatabaseDocs(unittest.TestCase):
         self.assertIn(state, list(self.storage._DBStorage__session.deleted))
 
     @unittest.skipIf(type(models.storage) == FileStorage,
-                    "Testing FileStorage")
+                     "Testing FileStorage")
     def test_dbstorage_reload(self):
         initial_session = self.storage._DBStorage__session
         self.storage.reload()

@@ -33,5 +33,6 @@ class TestUser(unittest.TestCase):
         User.last_name = "Holberton"
         self.assertEqual(str, type(User.last_name))
 
+
 if __name__ == "__main__":
     unittest.main()

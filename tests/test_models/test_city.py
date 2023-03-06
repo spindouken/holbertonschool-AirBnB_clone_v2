@@ -13,9 +13,11 @@ class TestCityModel(unittest.TestCase):
 
     def test_state_id(self):
         Tulsa = City()
-        self.assertEqual(sqlalchemy.orm.attributes.InstrumentedAttribute, type(City.state_id))
+        self.assertEqual(sqlalchemy.orm.attributes.InstrumentedAttribute,
+                         type(City.state_id))
         self.assertIn("state_id", dir(Tulsa))
         self.assertNotIn("state_id", Tulsa.__dict__)
+
 
 if __name__ == "__main__":
     unittest.main()
