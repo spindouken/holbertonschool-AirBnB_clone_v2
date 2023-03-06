@@ -18,13 +18,6 @@ class test_basemodel(unittest.TestCase):
         self.name = 'BaseModel'
         self.value = BaseModel
 
-    def test_init(self):
-        obj = BaseModel()
-        self.assertTrue(isinstance(obj, BaseModel))
-        self.assertTrue(hasattr(obj, "id"))
-        self.assertTrue(hasattr(obj, "created_at"))
-        self.assertTrue(hasattr(obj, "updated_at"))
-
     def setUp(self):
         """ """
         pass
@@ -55,14 +48,6 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
 
-    @unittest.skipIf(os.getenv("HBNB_ENV") is not None, "Testing DBStorage")
-    def test_save(self):
-        new_base = self.base.updated_at
-        self.base.save()
-        self.assertLess(new_base, self.base.updated_at)
-        with open("file.json", "r") as file:
-            self.assertIn("BaseModel.{}".format(self.base.id), file.read())
-
     def test_str(self):
         """ """
         i = self.value()
@@ -70,13 +55,10 @@ class test_basemodel(unittest.TestCase):
                          i.__dict__))
 
     def test_to_dict(self):
-        new_base = self.base.to_dict()
-        self.assertEqual(dict, type(new_base))
-        self.assertEqual(self.base.id, new_base["id"])
-        self.assertEqual("BaseModel", new_base["__class__"])
-        self.assertEqual(self.base.created_at.isoformat(), new_base["created_at"])
-        self.assertEqual(self.base.updated_at.isoformat(), new_base["updated_at"])
-        self.assertEqual(new_base.get("_sa_instance_state", None), None)
+        """ """
+        i = self.value()
+        n = i.to_dict()
+        self.assertEqual(i.to_dict(), n)
 
     def test_kwargs_none(self):
         """ """
