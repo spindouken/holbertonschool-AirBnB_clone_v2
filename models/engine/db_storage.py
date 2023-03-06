@@ -26,6 +26,7 @@ class DBStorage:
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(user, pwd, host, db),
                                       pool_pre_ping=True)
+        Base.metadata.bind = self.__engine
         if os.environ.get('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
