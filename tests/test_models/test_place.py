@@ -49,8 +49,9 @@ class test_Place(test_basemodel):
         self.assertEqual(type(new.max_guest), int)
 
     def test_price_by_night(self):
-        """ """
+        """Test that price_by_night is an integer and has a default value of 0"""
         new = self.value()
+        self.assertIsNotNone(new.price_by_night)
         self.assertIsInstance(new.price_by_night, int)
         self.assertEqual(new.price_by_night, 0)
 
