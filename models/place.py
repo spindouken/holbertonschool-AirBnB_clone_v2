@@ -53,8 +53,6 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """ Amenity Getter attribute in case of file storage """
-            from models import storage
-            from models.amenity import Amenity
             a_list = []
             a_dictionary = storage.all(Amenity)
 
