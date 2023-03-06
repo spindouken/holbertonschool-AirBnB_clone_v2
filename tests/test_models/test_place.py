@@ -23,7 +23,6 @@ class test_Place(test_basemodel):
         new = self.value(user_id="test_user_id")
         self.assertEqual(type(new.user_id), str)
 
-
     def test_name(self):
         """ """
         new = self.value()
@@ -53,6 +52,7 @@ class test_Place(test_basemodel):
         """ """
         new = self.value()
         self.assertEqual(type(new.price_by_night), int)
+        self.assertEqual(new.price_by_night, 0)
 
     def test_latitude(self):
         """ """
