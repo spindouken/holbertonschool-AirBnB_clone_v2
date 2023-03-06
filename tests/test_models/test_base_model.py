@@ -47,14 +47,13 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
 
+    @unittest.skipIf(os.getenv("HBNB_ENV") is not None, "Testing DBStorage")
     def test_save(self):
-        """ Testing save """
-        i = self.value()
-        i.save()
-        key = self.name + "." + i.id
-        with open('file.json', 'r') as f:
-            j = json.load(f)
-            self.assertEqual(j[key], i.to_dict())
+        new_base = self.base.updated_at
+        self.base.save()
+        self.assertLess(new_base, self.base.updated_at)
+        with open("file.json", "r") as file:
+            self.assertIn("BaseModel.{}".format(self.base.id), file.read())
 
     def test_str(self):
         """ """
@@ -62,11 +61,14 @@ class test_basemodel(unittest.TestCase):
         self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
                          i.__dict__))
 
-    def test_todict(self):
-        """ """
-        i = self.value()
-        n = i.to_dict()
-        self.assertEqual(i.to_dict(), n)
+    def test_to_dict(self):
+        new_base = self.base.to_dict()
+        self.assertEqual(dict, type(new_base))
+        self.assertEqual(self.base.id, new_base["id"])
+        self.assertEqual("BaseModel", new_base["__class__"])
+        self.assertEqual(self.base.created_at.isoformat(), new_base["created_at"])
+        self.assertEqual(self.base.updated_at.isoformat(), new_base["updated_at"])
+        self.assertEqual(new_base.get("_sa_instance_state", None), None)
 
     def test_kwargs_none(self):
         """ """
