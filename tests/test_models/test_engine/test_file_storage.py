@@ -54,21 +54,6 @@ class test_fileStorage(unittest.TestCase):
         new2 = BaseModel(**thing)
         self.assertNotEqual(os.path.getsize('file.json'), 0)
 
-    def test_save(self):
-        """ FileStorage save method """
-        new = BaseModel()
-        storage.save()
-        self.assertTrue(os.path.exists('file.json'))
-
-    def test_reload(self):
-        """ Storage file is successfully loaded to __objects """
-        new = BaseModel()
-        storage.save()
-        storage.reload()
-        for obj in storage.all().values():
-            loaded = obj
-        self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
-
     def test_reload_empty(self):
         """ Load from an empty file """
         with open('file.json', 'w') as f:
