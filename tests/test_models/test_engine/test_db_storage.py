@@ -118,42 +118,45 @@ class TestDatabaseDocs(unittest.TestCase):
         store = list(self.storage._DBStorage__session.new)
         self.assertIn(st, store)
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
-                     "Testing FileStorage")
+    @unittest.skipIf(type(models.storage) == FileStorage, "Testing FileStorage")
     def test_dbstorage_save(self):
         """Test save method."""
         st = State(name="Oklahoma")
-        self.storage._DBStorage__session.add(st)
+        self.storage.new(st)
         self.storage.save()
-        db = MySQLdb.connect(user="hbnb_test",
-                             passwd="hbnb_test_pwd",
-                             db="hbnb_test_db")
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM states WHERE BINARY name = 'Oklahoma'")
-        query = cursor.fetchall()
-        self.assertEqual(1, len(query))
-        self.assertEqual(st.id, query[0][0])
-        cursor.close()
+        query = self.storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
 
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_dbstorage_delete(self):
         """Test delete method."""
-        state = State(name="Oklahoma")
-        self.storage._DBStorage__session.add(state)
-        self.storage._DBStorage__session.commit()
-        self.storage.delete(state)
-        self.assertIn(state, list(self.storage._DBStorage__session.deleted))
+        st = State(name="Oklahoma")
+        self.storage.new(st)
+        key = "{}.{}".format(type(st).__name__, st.id)
+        self.storage.save()
+        self.storage.delete(st)
+        self.assertNotIn(key, self.storage.all().keys())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
-                     "Testing FileStorage")
-    def test_dbstorage_reload(self):
-        initial_session = self.storage._DBStorage__session
-        self.storage.reload()
-        self.assertIsInstance(self.storage._DBStorage__session, Session)
-        self.assertNotEqual(initial_session, self.storage._DBStorage__session)
-        self.storage._DBStorage__session.close()
-        self.storage._DBStorage__session = initial_session
+@unittest.skipIf(type(models.storage) == FileStorage, "Testing FileStorage")
+def test_dbstorage_reload(self):
+    """Test reload method."""
+    # Create new state object and add to session
+    st = State(name="Oklahoma")
+    self.storage.new(st)
+    self.storage.save()
+
+    # Check if object is saved in the database
+    query = self.storage._DBStorage__session.query(State).all()
+    self.assertIn(st, query)
+
+    # Clear session and recreate storage object
+    self.storage._DBStorage__session.close()
+    self.storage.reload()
+
+    # Check that state object is still in the database
+    query = self.storage._DBStorage__session.query(State).all()
+    self.assertIn(st, query)
 
 
 if __name__ == "__main__":
