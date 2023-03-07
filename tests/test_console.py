@@ -93,16 +93,15 @@ class TestHBNBCommand(unittest.TestCase):
     def test_create_kwargs(self):
         with patch("sys.stdout", new=StringIO()) as test:
             self.HBNB.onecmd('create User first_name="John"\
-                             email="john@example.com password="1234"')
+                             email="john@example.com" password="1234"')
             new_user = test.getvalue().strip()
         with patch("sys.stdout", new=StringIO()) as test:
             self.HBNB.onecmd("all User")
-            user_output = test.getvalue()
-            self.assertIn(new_user, user_output)
-            self.assertIn("'first_name': 'John'", user_output)
-            self.assertIn("'email': 'john@example.com'", user_output)
-            self.assertNotIn("'last_name': 'Snow'", user_output)
-            self.assertIn("'password': '1234'", user_output)
+            self.assertIn(new_user, test.getvalue())
+            self.assertIn("'first_name': 'John'", test.getvalue())
+            self.assertIn("'email': 'john@example.com'", test.getvalue())
+            self.assertNotIn("'last_name': 'Snow'", test.getvalue())
+            self.assertIn("'password': '1234'", test.getvalue())
 
 
 if __name__ == '__main__':

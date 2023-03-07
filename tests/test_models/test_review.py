@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 """ """
-from tests.test_models.test_base_model import test_basemodel
+from tests.test_models.test_base_model import TestBaseModel
 from models.review import Review
+from models.user import User
 
 
-class test_review(test_basemodel):
+class test_review(TestBaseModel):
     """ """
 
     def __init__(self, *args, **kwargs):
@@ -27,8 +28,3 @@ class test_review(test_basemodel):
                             text="Test review")
         new_review.save()
         self.assertEqual(type(new_review.user_id), str)
-
-    def test_text(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.text), str)

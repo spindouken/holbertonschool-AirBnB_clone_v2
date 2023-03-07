@@ -2,8 +2,8 @@
 """
 Defines unittests for the 'models/engine/db_storage.py' file.
 """
-import pep8
 import models
+import pep8
 import MySQLdb
 import unittest
 import os
