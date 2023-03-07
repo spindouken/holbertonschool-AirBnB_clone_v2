@@ -28,3 +28,11 @@ class test_review(TestBaseModel):
                             text="Test review")
         new_review.save()
         self.assertEqual(type(new_review.user_id), str)
+
+    def test_text(self):
+        """ """
+        new = self.value()
+        if new.text is None:
+            new.text = ''
+        self.assertIsInstance(new.text, str)
+        self.assertEqual(new.text, '')
