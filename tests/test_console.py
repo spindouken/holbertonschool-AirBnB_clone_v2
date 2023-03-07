@@ -104,5 +104,32 @@ class TestHBNBCommand(unittest.TestCase):
             self.assertIn("'password': '1234'", test.getvalue())
 
 
+@unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db', 'test DB mode')
+class TestHBNBComDB(unittest.TestCase):
+    """testing DB Storage"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cli = HBNBCommand()
+
+    def setUp(self):
+        pass
+
+    def test_storage(self):
+        self.assertIsInstance(storage, DBStorage)
+        obj = State()
+        obj.name = "California"
+        obj.save()
+        self.assertEqual(type(obj), State)
+
+    def test_crt_dbs(self):
+        with patch("sys.stdout", new=StringIO()) as f:
+            self.cli.onecmd("create State name='California'")
+            ca = f.getvalue().strip()
+        with patch("sys.stdout", new=StringIO()) as f:
+            self.cli.onecmd("all State")
+            self.assertIn(ca, f.getvalue())
+
+
 if __name__ == '__main__':
     unittest.main()
