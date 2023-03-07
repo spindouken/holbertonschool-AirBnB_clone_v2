@@ -138,25 +138,25 @@ class TestDatabaseDocs(unittest.TestCase):
         self.storage.delete(st)
         self.assertNotIn(key, self.storage.all().keys())
 
-@unittest.skipIf(type(models.storage) == FileStorage, "Testing FileStorage")
-def test_dbstorage_reload(self):
-    """Test reload method."""
-    # Create new state object and add to session
-    st = State(name="Oklahoma")
-    self.storage.new(st)
-    self.storage.save()
+    @unittest.skipIf(type(models.storage) == FileStorage, "Testing FileStorage")
+    def test_dbstorage_reload(self):
+        """Test reload method."""
+        # Create new state object and add to session
+        st = State(name="Oklahoma")
+        self.storage.new(st)
+        self.storage.save()
 
-    # Check if object is saved in the database
-    query = self.storage._DBStorage__session.query(State).all()
-    self.assertIn(st, query)
+        # Check if object is saved in the database
+        query = self.storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
 
-    # Clear session and recreate storage object
-    self.storage._DBStorage__session.close()
-    self.storage.reload()
+        # Clear session and recreate storage object
+        self.storage._DBStorage__session.close()
+        self.storage.reload()
 
-    # Check that state object is still in the database
-    query = self.storage._DBStorage__session.query(State).all()
-    self.assertIn(st, query)
+        # Check that state object is still in the database
+        query = self.storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
 
 
 if __name__ == "__main__":
