@@ -26,8 +26,8 @@ class DBStorage:
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(user, pwd, host, db),
                                       pool_pre_ping=True)
-        Base.metadata.bind = self.__engine
-        if os.environ.get('HBNB_ENV') == 'test':
+        env = os.getenv("HBNB_ENV")
+        if env == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
@@ -53,7 +53,7 @@ class DBStorage:
 
     def delete(self, obj=None):
         """Delete obj from the current database session"""
-        if obj is not None:
+        if obj:
             self.__session.delete(obj)
 
     def reload(self):
@@ -62,8 +62,6 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         self.__session = scoped_session(sessionmaker(bind=self.__engine,
                                                      expire_on_commit=False))
-        self.__session.configure(bind=self.__engine)
-        return self.__session
 
     def close(self):
         """Method that closes the session"""
