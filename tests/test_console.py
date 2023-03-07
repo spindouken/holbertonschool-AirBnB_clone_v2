@@ -11,9 +11,9 @@ from models.engine.file_storage import FileStorage
 from console import HBNBCommand
 
 
+@unittest.skipIf(type(models.storage) == DBStorage, "Testing DBstorage")
 class TestHBNBCommand(unittest.TestCase):
     """Unittesting the HBNB command interpreter"""
-
     @classmethod
     def setUpClass(test_cls):
         try:
@@ -41,7 +41,6 @@ class TestHBNBCommand(unittest.TestCase):
         except IOError:
             pass
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBstorage")
     def test_create(self):
         with patch("sys.stdout", new=StringIO()) as test:
             self.HBNB.onecmd("create BaseMOdel")
@@ -65,7 +64,6 @@ class TestHBNBCommand(unittest.TestCase):
             self.HBNB.onecmd("create Amenity")
             new_amenity = test.getvalue().strip()
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBStorage")
     def test_all(self):
         with patch("sys.stdout", new=StringIO()) as test:
             self.HBNB.onecmd("all BaseMOdel")
@@ -89,7 +87,6 @@ class TestHBNBCommand(unittest.TestCase):
             self.HBNB.onecmd("all Amenity")
             new_amenity = test.getvalue().strip()
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBstorage")
     def test_create_kwargs(self):
         with patch("sys.stdout", new=StringIO()) as test:
             self.HBNB.onecmd('create User first_name="John"\
