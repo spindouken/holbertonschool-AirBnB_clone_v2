@@ -34,7 +34,7 @@ class DBStorage:
         """Query on the current database session
         all objects depending on class name"""
         objs = {}
-        classes = [cls] if cls else \
+        classes = [cls] if isinstance(cls, type) else \
             [BaseModel, User, State, City, Amenity, Place, Review]
         for c in classes:
             for obj in self.__session.query(c).all():
@@ -55,7 +55,6 @@ class DBStorage:
         """Delete obj from the current database session"""
         if obj is not None:
             self.__session.delete(obj)
-            self.save()
 
     def reload(self):
         """Create all tables in the database and create
@@ -64,7 +63,9 @@ class DBStorage:
         self.__session = scoped_session(sessionmaker(bind=self.__engine,
                                                      expire_on_commit=False))
         self.__session.configure(bind=self.__engine)
+        return self.__session
 
     def close(self):
         """Method that closes the session"""
-        self.__session.close()
+        if self.__session:
+            self.__session.close()
