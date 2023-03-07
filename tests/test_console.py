@@ -4,11 +4,13 @@ import os
 import uuid
 import unittest
 import models
+import console
 from io import StringIO
 from unittest.mock import patch
 from models.engine.db_storage import DBStorage
 from models.engine.file_storage import FileStorage
 from console import HBNBCommand
+from models.state import State
 
 
 @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBstorage")
@@ -113,7 +115,7 @@ class TestHBNBComDB(unittest.TestCase):
         pass
 
     def test_storage(self):
-        self.assertIsInstance(storage, DBStorage)
+        self.assertIsInstance(console.storage, DBStorage)
         obj = State()
         obj.name = "California"
         obj.save()
