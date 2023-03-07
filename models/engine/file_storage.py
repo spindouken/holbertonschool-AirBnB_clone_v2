@@ -46,22 +46,20 @@ class FileStorage:
                     'Review': Review
                   }
         try:
-            with open(self.__file_path, 'r') as f:
-                objs = json.load(f)
-            for key, val in objs.items():
-                cls_name, obj_id = key.split('.')
-                cls = models.classes[cls_name]
-                self.__objects[key] = cls(**val)
+            temp = {}
+            with open(FileStorage.__file_path, 'r') as f:
+                temp = json.load(f)
+                for key, val in temp.items():
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
         """Delete obj from __objects"""
-        if obj in self.__objects.values():
+        if obj is not None:
             key = obj.__class__.__name__ + "." + obj.id
-            self.__objects.pop(key, None)
-        elif obj is None:
-            return
+            if key in self.__objects:
+                del self.__objects[key]
 
     def close(self):
         """Method that calls reload"""
