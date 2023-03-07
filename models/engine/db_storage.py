@@ -34,11 +34,10 @@ class DBStorage:
         """Query on the current database session
         all objects depending on class name"""
         objs = {}
-        classes = [cls] if isinstance(cls, type) else \
-            [BaseModel, User, State, City, Amenity, Place, Review]
+        classes = [cls] if cls else BaseModel.__subclasses__()
         for c in classes:
             for obj in self.__session.query(c).all():
-                key = obj.__class__.__name__ + '.' + obj.id
+                key = f"{obj.__class__.__name__}.{obj.id}"
                 objs[key] = obj
         return objs
 

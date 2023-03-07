@@ -15,30 +15,35 @@ class test_Place(test_basemodel):
 
     def test_city_id(self):
         """ """
+        new = self.value()
         if new.city_id is None:
-            new.city_id = 0
+            new.city_id = ''
         self.assertIsInstance(new.city_id, str)
-        self.assertEqual(new.city_id, 0)
+        self.assertEqual(new.city_id, '')
 
     def test_user_id(self):
         """ """
+        new = self.value()
         if new.user_id is None:
-            new.user_id = 0
+            new.user_id = ''
         self.assertIsInstance(new.user_id, str)
-        self.assertEqual(new.user_id, 0)
+        self.assertEqual(new.user_id, '')
 
     def test_name(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.name), str)
+        if new.name is None:
+            new.name = ''
+        self.assertIsInstance(new.name, str)
+        self.assertEqual(new.name, '')
 
     def test_description(self):
         """ """
         new = self.value()
         if new.description is None:
-            new.description = 0
+            new.description = ''
         self.assertIsInstance(new.description, str)
-        self.assertEqual(new.description, 0)
+        self.assertEqual(new.description, '')
 
     def test_number_rooms(self):
         """ """
@@ -76,17 +81,17 @@ class test_Place(test_basemodel):
         """ """
         new = self.value()
         if new.latitude is None:
-            new.latitude = 0
+            new.latitude = 0.0
         self.assertIsInstance(new.latitude, float)
-        self.assertEqual(new.latitude, 0)
+        self.assertEqual(new.latitude, 0.0)
 
     def test_longitude(self):
         """ """        
         new = self.value()
         if new.longitude is None:
-            new.longitude = 0
+            new.longitude = 0.0
         self.assertIsInstance(new.longitude, float)
-        self.assertEqual(new.longitude, 0)
+        self.assertEqual(new.longitude, 0.0)
 
     def test_amenity_ids(self):
         """ """

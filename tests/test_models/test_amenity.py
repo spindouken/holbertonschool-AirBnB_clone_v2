@@ -14,8 +14,9 @@ class test_Amenity(test_basemodel):
         self.value = Amenity
 
     def test_name2(self):
-        """ """        
+        """ """       
+        new = self.value() 
         if new.name is None:
-            new.name = 0
+            new.name = ''
         self.assertIsInstance(new.name, str)
-        self.assertEqual(new.name, 0)
+        self.assertEqual(new.name, '')

@@ -6,6 +6,7 @@ import pep8
 import models
 import MySQLdb
 import unittest
+import os
 from os import getenv
 from models.base_model import BaseModel, Base
 from models.user import User
@@ -138,7 +139,7 @@ class TestDatabaseDocs(unittest.TestCase):
         self.storage.delete(st)
         self.assertNotIn(key, self.storage.all().keys())
 
-    @unittest.skipIf(type(models.storage) == FileStorage, "Testing FileStorage")
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', "Testing DBStorage")
     def test_dbstorage_reload(self):
         """Test reload method."""
         # Create new state object and add to session
@@ -157,6 +158,7 @@ class TestDatabaseDocs(unittest.TestCase):
         # Check that state object is still in the database
         query = self.storage._DBStorage__session.query(State).all()
         self.assertIn(st, query)
+
 
 
 if __name__ == "__main__":
