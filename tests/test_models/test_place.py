@@ -70,7 +70,7 @@ class test_Place(test_basemodel):
         self.assertEqual(new.max_guest, 0)
 
     def test_price_by_night(self):
-        """Test that price_by_night is an integer and has a default value of 0"""
+        """Test that price_by_night is an integer & has default value of 0"""
         new = self.value()
         if new.price_by_night is None:
             new.price_by_night = 0
@@ -86,7 +86,7 @@ class test_Place(test_basemodel):
         self.assertEqual(new.latitude, 0.0)
 
     def test_longitude(self):
-        """ """        
+        """ """
         new = self.value()
         if new.longitude is None:
             new.longitude = 0.0

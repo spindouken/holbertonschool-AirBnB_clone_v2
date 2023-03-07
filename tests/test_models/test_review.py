@@ -23,7 +23,8 @@ class test_review(test_basemodel):
         """ Test that user_id is a string """
         new_user = User(email="john@example.com", password="password")
         new_user.save()
-        new_review = Review(place_id="123", user_id=new_user.id, text="Test review")
+        new_review = Review(place_id="123", user_id=new_user.id,
+                            text="Test review")
         new_review.save()
         self.assertEqual(type(new_review.user_id), str)
 
