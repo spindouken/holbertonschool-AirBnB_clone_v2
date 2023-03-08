@@ -15,6 +15,8 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+from models import storage
+from models.state import State
 from models.engine.db_storage import DBStorage
 from models.engine.file_storage import FileStorage
 from sqlalchemy.orm import sessionmaker
@@ -140,26 +142,24 @@ class TestDatabaseDocs(unittest.TestCase):
         self.storage.delete(st)
         self.assertNotIn(key, self.storage.all().keys())
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE')
-                     == 'db', "Testing DBStorage")
-    def test_dbstorage_reload(cls):
+    def test_dbstorage_reload(self):
         """Test reload method."""
         # Create new state object and add to session
         st = State(name="Oklahoma")
-        cls.storage.new(st)
-        cls.storage.save()
+        storage.new(st)
+        storage.save()
 
         # Check if object is saved in the database
-        query = cls.storage._DBStorage__session.query(State).all()
-        cls.assertIn(st, query)
+        query = storage._DBStoragesession.query(State).all()
+        self.assertIn(st, query)
 
         # Clear session and recreate storage object
-        cls.storage._DBStorage__session.close()
-        cls.storage.reload()
+        storage._DBStoragesession.close()
+        storage.reload()
 
         # Check that state object is still in the database
-        query = cls.storage._DBStorage__session.query(State).all()
-        cls.assertIn(st, query)
+        query = storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
 
 
 if __name__ == "__main__":
