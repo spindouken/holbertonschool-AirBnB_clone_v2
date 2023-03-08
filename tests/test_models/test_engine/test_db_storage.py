@@ -3,6 +3,7 @@
 Defines unittests for the 'models/engine/db_storage.py' file.
 """
 import models
+import pep8
 import MySQLdb
 import unittest
 import os
@@ -66,6 +67,12 @@ class TestDatabaseDocs(unittest.TestCase):
             del cls.review
             cls.storage._DBStorage__session.close()
             del cls.storage
+
+    def test_pep8(self):
+        """Test pep8 styling."""
+        style = pep8.StyleGuide(quiet=True)
+        result = style.check_files(['models/engine/db_storage.py'])
+        self.assertEqual(result.total_errors, 0, "Fix PEP8")
 
     def test_docstrings(self):
         """Test that all methods have docstrings."""
@@ -135,15 +142,24 @@ class TestDatabaseDocs(unittest.TestCase):
         self.storage.delete(st)
         self.assertNotIn(key, self.storage.all().keys())
 
-    def test_reload(self):
+    def test_dbstorage_reload(self):
         """Test reload method."""
-        self.storage = DBStorage()
-        og_session = self.storage._DBStorage__session
-        self.storage.reload()
-        self.assertIsInstance(self.storage._DBStorage__session, Session)
-        self.assertNotEqual(og_session, self.storage._DBStorage__session)
-        self.storage._DBStorage__session.close()
-        self.storage._DBStorage__session = og_session
+        # Create new state object and add to session
+        st = State(name="Oklahoma")
+        storage.new(st)
+        storage.save()
+
+        # Check if object is saved in the database
+        query = storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
+
+        # Clear session and recreate storage object
+        storage._DBStorage__session.close()
+        storage.reload()
+
+        # Check that state object is still in the database
+        query = storage._DBStorage__session.query(State).all()
+        self.assertIn(st, query)
 
 
 if __name__ == "__main__":
