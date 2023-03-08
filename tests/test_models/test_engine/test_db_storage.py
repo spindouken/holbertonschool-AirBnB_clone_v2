@@ -150,11 +150,11 @@ class TestDatabaseDocs(unittest.TestCase):
         storage.save()
 
         # Check if object is saved in the database
-        query = storage._DBStoragesession.query(State).all()
+        query = storage._DBStorage__session.query(State).all()
         self.assertIn(st, query)
 
         # Clear session and recreate storage object
-        storage._DBStoragesession.close()
+        storage._DBStorage__session.close()
         storage.reload()
 
         # Check that state object is still in the database
