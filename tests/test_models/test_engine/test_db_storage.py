@@ -142,12 +142,12 @@ class TestDatabaseDocs(unittest.TestCase):
 
     @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE')
                      == 'db', "Testing DBStorage")
-    def test_dbstorage_reload(self):
+    def test_dbstorage_reload(cls):
         """Test reload method."""
         # Create new state object and add to session
         st = State(name="Oklahoma")
-        self.storage.new(st)
-        self.storage.save()
+        cls.storage.new(st)
+        cls.storage.save()
 
         # Check if object is saved in the database
         query = self.storage._DBStorage__session.query(State).all()
