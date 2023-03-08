@@ -150,16 +150,16 @@ class TestDatabaseDocs(unittest.TestCase):
         cls.storage.save()
 
         # Check if object is saved in the database
-        query = self.storage._DBStorage__session.query(State).all()
-        self.assertIn(st, query)
+        query = cls.storage._DBStorage__session.query(State).all()
+        cls.assertIn(st, query)
 
         # Clear session and recreate storage object
-        self.storage._DBStorage__session.close()
-        self.storage.reload()
+        cls.storage._DBStorage__session.close()
+        cls.storage.reload()
 
         # Check that state object is still in the database
-        query = self.storage._DBStorage__session.query(State).all()
-        self.assertIn(st, query)
+        query = cls.storage._DBStorage__session.query(State).all()
+        cls.assertIn(st, query)
 
 
 if __name__ == "__main__":
