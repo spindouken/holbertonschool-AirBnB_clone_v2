@@ -10,7 +10,6 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-import shlex
 
 
 class HBNBCommand(cmd.Cmd):
@@ -38,7 +37,6 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -74,7 +72,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] == '}' \
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -114,41 +112,31 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def _key_value_parser(self, args):
-        """creates a dictionary from a list of strings"""
-        new_dict = {}
-        for arg in args:
-            if "=" in arg:
-                kvp = arg.split('=', 1)
-                key = kvp[0]
-                value = kvp[1]
-                if value[0] == value[-1] == '"':
-                    value = shlex.split(value)[0].replace('_', ' ')
-                else:
-                    try:
-                        value = int(value)
-                    except:
-                        try:
-                            value = float(value)
-                        except:
-                            continue
-                new_dict[key] = value
-        return new_dict
-
-    def do_create(self, arg):
-        """Creates a new instance of a class"""
-        args = arg.split()
-        if len(args) == 0:
+    def do_create(self, args):
+        """ Create an object of any class"""
+        cls = args.partition(' ')[0]
+        if not cls:
             print("** class name missing **")
-            return False
-        if args[0] in classes:
-            new_dict = self._key_value_parser(args[1:])
-            instance = classes[args[0]](**new_dict)
-        else:
+            return
+        elif cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
-            return False
-        print(instance.id)
-        instance.save()
+            return
+        param_string = args.partition(' ')[2]
+        param_dict = {}
+        while param_string:
+            param_strings = param_string.partition(' ')
+            curr_param = param_strings[0]
+            param_data = curr_param.partition('=')
+            try:
+                val = HBNBCommand.get_value(param_data[2])
+                param_dict[param_data[0]] = val
+            except TypeError:
+                pass
+            param_string = param_strings[2]
+        new_instance = HBNBCommand.classes[cls](**param_dict)
+        storage.save()
+        print(new_instance.id)
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -179,7 +167,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            print(storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
@@ -190,28 +178,28 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, args):
         """ Destroys a specified object """
-        new = args.partition(" ")
-        c_name = new[0]
-        c_id = new[2]
-        if c_id and ' ' in c_id:
-            c_id = c_id.partition(' ')[0]
+        arg_data = args.partition(" ")
+        cls_name = arg_data[0]
+        obj_id = arg_data[2]
+        if obj_id and ' ' in obj_id:
+            obj_id = obj_id.partition(' ')[0]
 
-        if not c_name:
+        if not cls_name:
             print("** class name missing **")
             return
 
-        if c_name not in HBNBCommand.classes:
+        if cls_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        if not c_id:
+        if not obj_id:
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
+        key = cls_name + "." + obj_id
 
         try:
-            del(storage.all()[key])
+            storage.delete(storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -230,13 +218,12 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            all_objs = storage.all(eval(args)).values()
-            for obj in all_objs:
-                print_list.append(str(obj))
+            for k, v in storage.all(HBNBCommand.classes[args]).items():
+                if k.split('.')[0] == args:
+                    print_list.append(str(v))
         else:
-            all_objs = storage.all().values()
-            for obj in all_objs:
-                print_list.append(str(obj))
+            for k, v in storage.all().items():
+                print_list.append(str(v))
 
         print(print_list)
 
@@ -248,7 +235,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage._FileStorage__objects.items():
+        for k, v in storage.all().items():
             if args == k.split('.')[0]:
                 count += 1
         print(count)
@@ -344,6 +331,22 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    def get_value(input_str):
+        """attempts to turn a string to number"""
+        num = None
+        try:
+            num = float(input_str)          # if float fails num will be None
+            res = int(input_str)
+        except ValueError:
+            res = num or str(input_str)     # if int failed, num won't be None,
+        if type(res) is str:
+            if (res[0] != res[-1] or res[0] != '"'):
+                raise TypeError('Not Implmented')
+            res = res.replace("_", ' ')
+            res = res.strip('"')
+
+        return res
 
 
 if __name__ == "__main__":
