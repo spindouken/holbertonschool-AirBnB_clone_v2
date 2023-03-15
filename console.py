@@ -14,6 +14,7 @@ from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
+
     # determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
@@ -112,46 +113,34 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def get_value(input_str):
-        """attempts to turn a string to number"""
-        num = None
-        try:
-            num = float(input_str)          # if float fails num will be None
-            res = int(input_str)
-        except ValueError:
-            res = num or str(input_str)     # if int failed, num won't be None,
-        if type(res) is str:
-            if (res[0] != res[-1] or res[0] != '"'):
-                raise TypeError('Not Implmented')
-            res = res.replace("_", ' ')
-            res = res.strip('"')
-        return res
-
     def do_create(self, args):
         """ Create an object of any class"""
-        cls = args.partition(' ')[0]
-        if not cls:
+        split_args = args.split()
+        if not args:
             print("** class name missing **")
             return
-        elif cls not in HBNBCommand.classes:
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        param_string = args.partition(' ')[2]
-        param_dict = {}
-        while param_string:
-            param_strings = param_string.partition(' ')
-            curr_param = param_strings[0]
-            param_data = curr_param.partition('=')
-            try:
-                val = HBNBCommand.get_value(param_data[2])
-                param_dict[param_data[0]] = val
-            except TypeError:
-                pass
-            param_string = param_strings[2]
-        new_instance = HBNBCommand.classes[cls](**param_dict)
+        new_instance = HBNBCommand.classes[split_args[0]]()
+        for i in range(1, len(split_args)):
+            key_val = split_args[i].partition('=')
+            new_key = key_val[0]
+            new_val = key_val[2]
+            if '\"' in new_val:
+                new_val = new_val[1:-1]
+                new_val = new_val.replace("_", " ")
+            elif '.' in new_val:
+                new_val = float(new_val)
+            else:
+                new_val = int(new_val)
+
+            if hasattr(new_instance, new_key):
+                setattr(new_instance, new_key, new_val)
+
+        storage.new(new_instance)
         storage.save()
         print(new_instance.id)
-        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -214,7 +203,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            storage.delete(storage.all()[key])
+            del(storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -233,12 +222,13 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage.all(HBNBCommand.classes[args]).items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            all_objs = storage.all(eval(args)).values()
+            for obj in all_objs:
+                print_list.append(str(obj))
         else:
-            for k, v in storage.all().items():
-                print_list.append(str(v))
+            all_objs = storage.all().values()
+            for obj in all_objs:
+                print_list.append(str(obj))
 
         print(print_list)
 
