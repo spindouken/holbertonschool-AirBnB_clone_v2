@@ -26,29 +26,31 @@ from sqlalchemy.engine.base import Engine
 
 class TestDatabaseDocs(unittest.TestCase):
     """Tests to check the documentation and style of Database classes"""
-    @classmethod
-    def setUpClass(cls):
-        """DBStorage testing setup."""
-        if type(models.storage) == DBStorage:
-            cls.storage = DBStorage()
-            Base.metadata.create_all(cls.storage._DBStorage__engine)
-            Session = sessionmaker(bind=cls.storage._DBStorage__engine)
-            cls.storage._DBStorage__session = Session()
-            cls.state = State(name="Oklahoma")
-            cls.storage._DBStorage__session.add(cls.state)
-            cls.city = City(name="Tulsa", state_id=cls.state.id)
-            cls.storage._DBStorage__session.add(cls.city)
-            cls.user = User(email="betty@holberton.com", password="shnarf")
-            cls.storage._DBStorage__session.add(cls.user)
-            cls.place = Place(city_id=cls.city.id, user_id=cls.user.id,
-                              name="Holberton")
-            cls.storage._DBStorage__session.add(cls.place)
-            cls.amenity = Amenity(name="Corn Holder")
-            cls.storage._DBStorage__session.add(cls.amenity)
-            cls.review = Review(place_id=cls.place.id, user_id=cls.user.id,
-                                text="is gud")
-            cls.storage._DBStorage__session.add(cls.review)
-            cls.storage._DBStorage__session.commit()
+@classmethod
+def setUpClass(cls):
+    """DBStorage testing setup."""
+    if getenv("HBNB_TYPE_STORAGE") == "db":
+        cls.storage = DBStorage()
+        Base.metadata.create_all(cls.storage._DBStorage__engine)
+        Session = sessionmaker(bind=cls.storage._DBStorage__engine)
+        cls.storage._DBStorage__session = Session()
+        cls.state = State(name="Oklahoma")
+        cls.storage._DBStorage__session.add(cls.state)
+        cls.city = City(name="Tulsa", state_id=cls.state.id)
+        cls.storage._DBStorage__session.add(cls.city)
+        cls.user = User(email="betty@holberton.com", password="shnarf")
+        cls.storage._DBStorage__session.add(cls.user)
+        cls.place = Place(city_id=cls.city.id, user_id=cls.user.id,
+                          name="Holberton")
+        cls.storage._DBStorage__session.add(cls.place)
+        cls.amenity = Amenity(name="Corn Holder")
+        cls.storage._DBStorage__session.add(cls.amenity)
+        cls.review = Review(place_id=cls.place.id, user_id=cls.user.id,
+                            text="is gud")
+        cls.storage._DBStorage__session.add(cls.review)
+        cls.storage._DBStorage__session.commit()
+    else:
+        cls.storage = FileStorage()
 
     @classmethod
     def tearDownClass(cls):

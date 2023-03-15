@@ -33,18 +33,22 @@ class DBStorage:
     def all(self, cls=None):
         """Query on the current database session
         all objects depending on class name"""
-        objs = {}
-        classes = [cls] if cls else BaseModel.__subclasses__()
-        for c in classes:
-            for obj in self.__session.query(c).all():
-                key = f"{obj.__class__.__name__}.{obj.id}"
-                objs[key] = obj
-        return objs
+        if cls is None:
+            all_classes = [State, City, Amenity, Place, Review, User]
+            temp = []
+            for c in all_classes:
+                temp.extend(self.__session.query(c).all())
+        else:
+            temp = self.__session.query(cls).all()
+        new_dict = {}
+        for obj in temp:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            new_dict[key] = obj
+        return new_dict
 
     def new(self, obj):
         """Add the object to the current database session"""
-        if isinstance(obj, BaseModel):
-            self.__session.add(obj)
+        self.__session.add(obj)
 
     def save(self):
         """Commit all changes of the current database session"""
@@ -52,17 +56,13 @@ class DBStorage:
 
     def delete(self, obj=None):
         """Delete obj from the current database session"""
-        if obj:
+        if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
         """Create all tables in the database and create
         current database session"""
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine,
-                                                     expire_on_commit=False))
-
-    def close(self):
-        """Method that closes the session"""
-        if self.__session:
-            self.__session.close()
+        session_temp = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(session_temp)
+        self.__session = Session()
