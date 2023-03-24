@@ -35,14 +35,14 @@ def python_yaya(text="is cool"):
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
-def aintnothinbutanumba(numba):
+def aintnothinbutanumba(n):
     """display "n is a number" only if n is an interger"""
-    return "{} is a number".format(numba)
+    return "{} is a number".format(n)
 
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
-def number_template(numba):
-    return render_template('5-number.html', numba=n)
+def number_pass(n):
+    return render_template('5-number.html', n=n)
 
 
 if __name__ == "__main__":
