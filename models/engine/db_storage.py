@@ -66,3 +66,8 @@ class DBStorage:
         session_temp = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_temp)
         self.__session = Session()
+
+     def close(self):
+        """Call remove method on private __session
+        or close on public session"""
+        self.__session.remove()
