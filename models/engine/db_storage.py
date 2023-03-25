@@ -34,13 +34,17 @@ class DBStorage:
         """Query on the current database session
         all objects depending on class name"""
         if cls is None:
-            classes = [User, State, City, Amenity, Place, Review]
-            objs = []
-            for cls in classes:
-                objs.extend(self.__session.query(cls).all())
+            all_classes = [State, City, Amenity, Place, Review, User]
+            temp = []
+            for c in all_classes:
+                temp.extend(self.__session.query(c).all())
         else:
-            objs = self.__session.query(cls).all()
-        return {obj.__class__.__name__ + '.' + obj.id: obj for obj in objs}
+            temp = self.__session.query(cls).all()
+        new_dict = {}
+        for obj in temp:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            new_dict[key] = obj
+        return new_dict
 
     def new(self, obj):
         """Add the object to the current database session"""
