@@ -37,17 +37,17 @@ class DBStorage:
             A dictionary of queried objects in the format <class name>.<obj id> = obj.
         """
         if cls is None:
-            objects = self.__session.query(State).all()
-            objects.extend(self.__session.query(City).all())
-            objects.extend(self.__session.query(User).all())
-            objects.extend(self.__session.query(Place).all())
-            objects.extend(self.__session.query(Review).all())
-            objects.extend(self.__session.query(Amenity).all())
+            all_classes = [State, City, Amenity, Place, Review, User]
+            temp = []
+            for c in all_classes:
+                temp.extend(self.__session.query(c).all())
         else:
-            if isinstance(cls, str):
-                cls = eval(cls)
-            objs = self.__session.query(cls).all()
-        return {"{}.{}".format(type(obj).__name__, obj.id): obj for obj in objs}
+            temp = self.__session.query(cls).all()
+        new_dict = {}
+        for obj in temp:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            new_dict[key] = obj
+        return new_dict
 
     def new(self, obj):
         """Add the object to the current database session"""
