@@ -70,7 +70,7 @@ class DBStorage:
         Session = scoped_session(session_temp)
         self.__session = Session()
 
-     def close(self):
+    def close(self):
         """Call remove method on private __session
         or close on public session"""
         self.__session.remove()
