@@ -17,6 +17,7 @@ def states_list():
     print("sorted_states_list:", sorted_states_list)
     return render_template('7-states_list.html', states=sorted_states_list)
 
+
 @app.teardown_appcontext
 def close_storage(exception):
     """Remove the current SQLAlchemy Session."""
