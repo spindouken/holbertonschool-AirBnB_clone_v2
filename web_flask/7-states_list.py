@@ -14,7 +14,6 @@ def states_list():
     present in DBStorage sorted by name"""
     states = storage.all(State)
     sorted_states_list = sorted(states.values(), key=lambda state: state.name)
-    print("sorted_states_list:", sorted_states_list)
     return render_template('7-states_list.html', states=sorted_states_list)
 
 
