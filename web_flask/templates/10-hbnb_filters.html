@@ -7,10 +7,12 @@
     <LINK rel="stylesheet" href="/static/styles/3-header.css">
     <LINK rel="stylesheet" href="/static/styles/3-footer.css">
     <LINK rel="stylesheet" href="/static/styles/6-filters.css">
-    <LINK rel="icon" href="/static/images/favicon.jpg">
+    <LINK rel="icon" href="images/icon.png" type="image/png">
   </HEAD>
   <BODY>
-    <HEADER></HEADER>
+    <HEADER>
+      <DIV class="logo"></DIV>
+    </HEADER>
     <DIV class="container">
       <SECTION class="filters">
         <DIV class="locations">
@@ -21,7 +23,7 @@
             {% for state in states %}
               <LI><STRONG>{{ state.name }}</STRONG>
                 <UL>
-                {% for city in state.cities|sort(attribute="name") %}
+                {% for city in state.cities %}
                   <LI>{{ city.name }}</LI>
                 {% endfor %}
                 </UL>
@@ -43,7 +45,7 @@
       </SECTION>
     </DIV>
     <FOOTER>
-      Holberton School
+      <strong>Holberton School</strong>
     </FOOTER>
   </BODY>
 </HTML>
